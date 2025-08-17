@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0.x'
+      - name: Restore
+        run: dotnet restore
+      - name: Run unit tests
+        run: dotnet test tests/UnitTests/UnitTests.csproj --logger trx
+      - name: Run integration tests
+        run: dotnet test tests/IntegrationTests/IntegrationTests.csproj --logger trx
+      - name: Run e2e tests
+        run: dotnet test tests/E2ETests/E2ETests.csproj --logger trx
+      - name: Run performance tests
+        run: dotnet test tests/PerformanceTests/PerformanceTests.csproj --logger trx
